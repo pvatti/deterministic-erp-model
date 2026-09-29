@@ -1,7 +1,7 @@
 import sqlite3
 import os
 
-DB_PATH = "gold_source.db"
+DB_PATH = "gold.db"
 
 def init_gold_db():
     # Deterministic: only create the Gold Source DB if it does not already exist
