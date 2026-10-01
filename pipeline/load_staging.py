@@ -1,4 +1,6 @@
 import sqlite3
+import os
+
 from staging_rules.transform_site import transform_sites
 from staging_rules.transform_item import transform_items
 from staging_rules.transform_vendor import transform_vendors
@@ -78,9 +80,18 @@ def load_staging():
         - exception logging
     """
 
+    if os.path.exists("data/staging.db"):
+        print("Removing existing STAGING database...")
+        os.remove("data/staging.db")
+
     # Connect to staging DB
     conn = sqlite3.connect("data/staging.db")
     stg = conn.cursor()
+
+    # Load schema
+    with open("init/schema/staging/staging_schema.sql", "r", encoding="utf-8") as f:
+        schema_sql = f.read()
+        stg.executescript(schema_sql)
 
     # Attach RAW DB
     conn.execute("ATTACH DATABASE 'data/raw.db' AS raw;")

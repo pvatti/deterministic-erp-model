@@ -7,4 +7,3 @@ VALUES (2, 1, "OP-RA-02", "Mark Lee", "Machine Operator");
 
 INSERT INTO operators (operator_id, site_id, operator_code, operator_name, role)
 VALUES (3, 2, "OP-CI-01", "Priya Patel", "Technician");
-)

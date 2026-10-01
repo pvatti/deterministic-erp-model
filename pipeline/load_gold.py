@@ -1,4 +1,5 @@
 import sqlite3
+import os
 
 
 # ---------------------------------------------------------------------------
@@ -304,6 +305,10 @@ def load_fact_costing(stg, gold):
 # ---------------------------------------------------------------------------
 
 def load_gold():
+    if os.path.exists("data/gold.db"):
+        print("Removing existing GOLD database...")
+        os.remove("data/gold.db")
+
     conn = sqlite3.connect("data/gold.db")
     gold = conn.cursor()
 
