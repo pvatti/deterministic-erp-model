@@ -1,23 +1,51 @@
-def transform_po(raw, stg, ex, vendor_map):
+def transform_po(raw, stg, ex):
+    """
+    RAW: purchase_orders_raw
+        po_id, vendor_id, po_date, status, created_by
+
+    STAGING: stg_po_clean
+        po_key, po_id, vendor_key, po_date, status, created_by
+    """
+
     po_id, vendor_id, po_date, status, created_by = raw
 
-    # 1. FK validation
-    if vendor_id not in vendor_map:
-        ex.execute(...); return
+    # Lookup vendor_key
+    vendor_row = stg.execute(
+        "SELECT vendor_key FROM stg_vendors_clean WHERE vendor_id = ?;",
+        (vendor_id,)
+    ).fetchone()
+    if vendor_row is None:
+        ex.execute("""
+            INSERT INTO stg_exceptions (
+                source_table, source_record_id, exception_type, severity,
+                description, timestamp, rule_name
+            )
+            VALUES ('purchase_orders_raw', ?, 'Missing vendor', 'high',
+                    'vendor_id not found in stg_vendors_clean', datetime('now'),
+                    'transform_po');
+        """, (po_id,))
+        return
+    vendor_key = vendor_row[0]
 
-    # 2. Business rule validation
-    if status not in ("open", "closed", "cancelled"):
-        ex.execute(...); return
+    # Normalize
+    status = status.strip() if status else None
+    created_by = created_by.strip() if created_by else None
 
-    # 3. Normalize
-    po_date = po_date.replace(" ", "T")
-
-    # 4. Canonicalize
-    status = status.lower().strip()
-
-    # 5. Insert
     stg.execute("""
         INSERT INTO stg_po_clean (
-            po_key, po_id, vendor_key, po_date, status, created_by
-        ) VALUES (?, ?, ?, ?, ?, ?);
-    """, (po_id, po_id, vendor_map[vendor_id], po_date, status, created_by))
+            po_key,
+            po_id,
+            vendor_key,
+            po_date,
+            status,
+            created_by
+        )
+        VALUES (?, ?, ?, ?, ?, ?);
+    """, (
+        po_id,
+        po_id,
+        vendor_key,
+        po_date,
+        status,
+        created_by
+    ))

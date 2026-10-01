@@ -1,27 +1,73 @@
-def transform_customer_order_line(raw, stg, ex, order_map, item_map):
-    order_line_id, order_id, item_id, qty, uom, notes = raw
+def transform_customer_order_lines(raw, stg, ex):
+    """
+    RAW: customer_order_lines_raw
+        order_line_id, order_id, item_id,
+        ordered_quantity, uom, notes
 
-    # 1. FK validation
-    if order_id not in order_map:
-        ex.execute(...); return
-    if item_id not in item_map:
-        ex.execute(...); return
+    STAGING: stg_customer_order_lines_clean
+        order_line_key, order_line_id, order_key,
+        item_key, ordered_quantity, uom, notes
+    """
 
-    # 2. Business rule validation
-    if qty <= 0:
-        ex.execute(...); return
+    order_line_id, order_id, item_id, ordered_quantity, uom, notes = raw
 
-    # 3. Normalize
-    uom = uom.upper().strip()
+    # Lookup order_key
+    order_row = stg.execute(
+        "SELECT order_key FROM stg_customer_orders_clean WHERE order_id = ?;",
+        (order_id,)
+    ).fetchone()
+    if order_row is None:
+        ex.execute("""
+            INSERT INTO stg_exceptions (
+                source_table, source_record_id, exception_type, severity,
+                description, timestamp, rule_name
+            )
+            VALUES ('customer_order_lines_raw', ?, 'Missing order', 'high',
+                    'order_id not found in stg_customer_orders_clean', datetime('now'),
+                    'transform_customer_order_lines');
+        """, (order_line_id,))
+        return
+    order_key = order_row[0]
 
-    # 4. Canonicalize
-    # (no special canonicalization needed here)
+    # Lookup item_key
+    item_row = stg.execute(
+        "SELECT item_key FROM stg_items_clean WHERE item_id = ?;",
+        (item_id,)
+    ).fetchone()
+    if item_row is None:
+        ex.execute("""
+            INSERT INTO stg_exceptions (
+                source_table, source_record_id, exception_type, severity,
+                description, timestamp, rule_name
+            )
+            VALUES ('customer_order_lines_raw', ?, 'Missing item', 'high',
+                    'item_id not found in stg_items_clean', datetime('now'),
+                    'transform_customer_order_lines');
+        """, (order_line_id,))
+        return
+    item_key = item_row[0]
 
-    # 5. Insert
+    # Normalize
+    uom = uom.strip()
+    notes = notes.strip() if notes else None
+
     stg.execute("""
         INSERT INTO stg_customer_order_lines_clean (
-            order_line_key, order_line_id, order_key, item_key,
-            ordered_quantity, uom, notes
-        ) VALUES (?, ?, ?, ?, ?, ?, ?);
-    """, (order_line_id, order_line_id, order_map[order_id],
-          item_map[item_id], qty, uom, notes))
+            order_line_key,
+            order_line_id,
+            order_key,
+            item_key,
+            ordered_quantity,
+            uom,
+            notes
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?);
+    """, (
+        order_line_id,
+        order_line_id,
+        order_key,
+        item_key,
+        ordered_quantity,
+        uom,
+        notes
+    ))
