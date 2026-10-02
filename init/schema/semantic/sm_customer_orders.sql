@@ -1,3 +1,5 @@
+DROP VIEW IF EXISTS sm_customer_orders;
+
 CREATE VIEW sm_customer_orders AS
 SELECT
     co.order_date,

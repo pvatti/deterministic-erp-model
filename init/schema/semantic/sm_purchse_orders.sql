@@ -1,3 +1,5 @@
+DROP VIEW IF EXISTS sm_purchase_orders;
+
 CREATE VIEW sm_purchase_orders AS
 SELECT
     po.order_date,

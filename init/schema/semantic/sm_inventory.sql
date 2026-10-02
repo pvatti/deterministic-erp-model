@@ -1,3 +1,5 @@
+DROP VIEW IF EXISTS sm_inventory;
+
 CREATE VIEW sm_inventory AS
 SELECT
     gi.snapshot_date,

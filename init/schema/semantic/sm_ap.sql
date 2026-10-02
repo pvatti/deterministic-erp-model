@@ -1,3 +1,5 @@
+DROP VIEW IF EXISTS sm_ap;
+
 CREATE VIEW sm_ap AS
 SELECT
     ap.invoice_date,

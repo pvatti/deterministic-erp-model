@@ -1,0 +1,20 @@
+CREATE TABLE IF NOT EXISTS fact_financials (
+    gl_line_id INTEGER PRIMARY KEY,
+    gl_account_code TEXT NOT NULL,
+    gl_account_name TEXT,
+    gl_category TEXT,
+    gl_subcategory TEXT,
+    fiscal_year INTEGER,
+    fiscal_period INTEGER,
+    posting_date TEXT,
+    site_id INTEGER,
+    item_id INTEGER,
+    customer_id INTEGER,
+    vendor_id INTEGER,
+    debit REAL,
+    credit REAL,
+    amount REAL,
+    created_at TEXT,
+    updated_at TEXT,
+    source_system TEXT
+);

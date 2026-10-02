@@ -1,3 +1,5 @@
+DROP VIEW IF EXISTS sm_production_throughput;
+
 CREATE VIEW sm_production_throughput AS
 SELECT
     ft.timestamp,

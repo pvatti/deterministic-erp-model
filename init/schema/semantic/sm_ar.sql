@@ -1,3 +1,5 @@
+DROP VIEW IF EXISTS sm_ar;
+
 CREATE VIEW sm_ar AS
 SELECT
     ar.invoice_date,
