@@ -2,13 +2,22 @@ DROP VIEW IF EXISTS sm_ap;
 
 CREATE VIEW sm_ap AS
 SELECT
-    ap.invoice_date,
-    ap.due_date,
-    dv.vendor_code,
-    dv.vendor_name,
-    ap.invoice_amount,
-    ap.open_amount,
-    -- Business metric
-    (julianday('now') - julianday(ap.due_date)) AS days_past_due
-FROM gold_ap ap
-LEFT JOIN gold_vendors dv ON ap.vendor_key = dv.vendor_key;
+    po.vendor_id,
+    v.vendor_code,
+    v.vendor_name,
+    po.po_number,
+    po.order_date,
+    po.extended_price AS invoice_amount,
+    po.extended_price
+        - COALESCE(p.amount_paid, 0) AS open_amount,
+    CASE
+        WHEN julianday('now') - julianday(po.order_date) <= 30 THEN '0-30'
+        WHEN julianday('now') - julianday(po.order_date) <= 60 THEN '31-60'
+        WHEN julianday('now') - julianday(po.order_date) <= 90 THEN '61-90'
+        ELSE '90+'
+    END AS aging_bucket
+FROM fact_purchase_order po
+JOIN dim_vendor v
+    ON po.vendor_id = v.vendor_id
+LEFT JOIN sm_ap_payments p
+    ON p.po_number = po.po_number;

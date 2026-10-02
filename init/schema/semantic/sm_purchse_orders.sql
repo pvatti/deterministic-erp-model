@@ -2,19 +2,23 @@ DROP VIEW IF EXISTS sm_purchase_orders;
 
 CREATE VIEW sm_purchase_orders AS
 SELECT
+    po.vendor_id,
+    v.vendor_code,
+    v.vendor_name,
+    po.site_id,
+    s.site_code,
+    po.item_id,
+    i.item_sku,
+    i.item_description,
+    po.po_number,
     po.order_date,
     po.promised_date,
     po.received_date,
-    dv.vendor_code,
-    dv.vendor_name,
-    ds.site_code,
-    di.item_code,
     po.ordered_qty,
     po.received_qty,
     po.open_qty,
-    -- Business metric
     (julianday(po.received_date) - julianday(po.order_date)) AS po_cycle_time_days
-FROM gold_po_lines po
-LEFT JOIN gold_vendors dv ON po.vendor_key = dv.vendor_key
-LEFT JOIN gold_sites ds ON po.site_key = ds.site_key
-LEFT JOIN gold_items di ON po.item_key = di.item_key;
+FROM fact_purchase_order po
+JOIN dim_vendor v ON po.vendor_id = v.vendor_id
+JOIN dim_sites s ON po.site_id = s.site_id
+JOIN dim_item i ON po.item_id = i.item_id;

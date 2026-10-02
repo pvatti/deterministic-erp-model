@@ -2,27 +2,30 @@ DROP VIEW IF EXISTS sm_customer_orders;
 
 CREATE VIEW sm_customer_orders AS
 SELECT
+    co.customer_id,
+    c.customer_code,
+    c.customer_name,
+    co.site_id,
+    s.site_code,
+    co.item_id,
+    i.item_sku,
+    i.item_description,
     co.order_date,
     co.promise_date,
     co.shipped_date,
-    dc.customer_code,
-    dc.customer_name,
-    ds.site_code,
-    di.item_code,
     co.ordered_qty,
     co.shipped_qty,
     co.open_qty,
-    -- Business metric
     CASE 
-        WHEN co.ordered_qty = 0 THEN 0
-        ELSE co.shipped_qty * 1.0 / co.ordered_qty
+        WHEN co.ordered_qty > 0 THEN co.shipped_qty * 1.0 / co.ordered_qty
+        ELSE NULL
     END AS fill_rate,
     CASE 
         WHEN co.shipped_date IS NULL THEN NULL
         WHEN co.shipped_date <= co.promise_date THEN 1
         ELSE 0
     END AS on_time_flag
-FROM gold_customer_order_lines co
-LEFT JOIN gold_customers dc ON co.customer_key = dc.customer_key
-LEFT JOIN gold_sites ds ON co.site_key = ds.site_key
-LEFT JOIN gold_items di ON co.item_key = di.item_key;
+FROM fact_customer_orders co
+JOIN dim_customer c ON co.customer_id = c.customer_id
+JOIN dim_sites s ON co.site_id = s.site_id
+JOIN dim_item i ON co.item_id = i.item_id;
