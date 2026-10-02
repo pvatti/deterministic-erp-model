@@ -26,6 +26,11 @@ from staging_rules.transform_ap import transform_ap
 from staging_rules.transform_ar import transform_ar
 from staging_rules.transform_costing import transform_costing
 
+base_dir = os.path.dirname(os.path.abspath(__file__))
+
+STAGING_DB = os.path.abspath(os.path.join(base_dir, "..", "data", "staging.db"))
+STAGING_SCHEMA = os.path.abspath(os.path.join(base_dir, "..", "init", "schema", "staging", "staging_schema.sql"))
+RAW_DB = os.path.abspath(os.path.join(base_dir, "..", "data", "raw.db"))
 
 # ---------------------------------------------------------------------------
 # TRANSFORM MAP
@@ -80,21 +85,21 @@ def load_staging():
         - exception logging
     """
 
-    if os.path.exists("data/staging.db"):
+    if os.path.exists(STAGING_DB):
         print("Removing existing STAGING database...")
-        os.remove("data/staging.db")
+        os.remove(STAGING_DB)
 
     # Connect to staging DB
-    conn = sqlite3.connect("data/staging.db")
+    conn = sqlite3.connect(STAGING_DB)
     stg = conn.cursor()
 
     # Load schema
-    with open("init/schema/staging/staging_schema.sql", "r", encoding="utf-8") as f:
+    with open(STAGING_SCHEMA, "r", encoding="utf-8") as f:
         schema_sql = f.read()
         stg.executescript(schema_sql)
 
     # Attach RAW DB
-    conn.execute("ATTACH DATABASE 'data/raw.db' AS raw;")
+    conn.execute(f"ATTACH DATABASE '{RAW_DB}' AS raw;")
 
     # Exception logging cursor
     ex = conn.cursor()

@@ -1,16 +1,21 @@
 import sqlite3
 import os
 
-RAW_DB = "data/raw.db"
-RAW_SCHEMA = "init/schema/raw/erp_schema.sql"
-RAW_SEED_DIR = "init/schema/raw/seed"
+base_dir = os.path.dirname(os.path.abspath(__file__))
+
+RAW_DB = os.path.abspath(os.path.join(base_dir, "..", "data", "raw.db"))
+RAW_SCHEMA = os.path.abspath(os.path.join(base_dir, "..", "init", "schema", "raw", "erp_schema.sql"))
+RAW_SEED_DIR = os.path.abspath(os.path.join(base_dir, "..", "init","schema","raw", "seed"))
 
 
 def create_raw_db():
     if os.path.exists(RAW_DB):
         print("Removing existing RAW database...")
         os.remove(RAW_DB)
-        
+
+    print("RAW_SCHEMA resolved to:", RAW_SCHEMA)
+    print("RAW_DB resolved to:", RAW_DB)
+
     print("Creating RAW database...")
     conn = sqlite3.connect(RAW_DB)
     cursor = conn.cursor()
@@ -21,7 +26,7 @@ def create_raw_db():
 
     conn.commit()
     conn.close()
-        
+
 
 
 def load_sql_seed_files():
