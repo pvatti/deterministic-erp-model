@@ -1,0 +1,36 @@
+{
+  "semantic_order": [
+    "sm_sites.sql",
+    "sm_items.sql",
+    "sm_customers.sql",
+    "sm_vendors.sql",
+
+    "sm_sales.sql",
+    "sm_inventory.sql",
+    "sm_customer_orders.sql",
+    "sm_purchase_orders.sql",
+    "sm_work_orders.sql",
+
+    "sm_production_throughput.sql",
+    "sm_machine_usage.sql",
+    "sm_machine_downtime.sql",
+
+    "sm_financials.sql",
+    "sm_ar.sql",
+    "sm_ap.sql",
+
+    "sm_sales_kpi.sql",
+    "sm_inventory_kpi.sql",
+    "sm_oee_kpi.sql",
+    "sm_production_performance_kpi.sql",
+    "sm_machine_reliability_kpi.sql",
+    "sm_predictive_maintenance_kpi.sql",
+
+    "sm_weekly_production_throughput.sql",
+    "sm_monthly_production_throughput.sql",
+    "sm_financial_quarterly.sql",
+
+    "sm_inventory_kpi_daily.sql",
+    "sm_sales_kpi_monthly.sql"
+  ]
+}

@@ -1,0 +1,94 @@
+models:
+  sm_sales:
+    depends_on:
+      - dim_customers
+      - dim_items
+      - fact_sales
+
+  sm_inventory:
+    depends_on:
+      - dim_items
+      - fact_inventory
+
+  sm_customer_orders:
+    depends_on:
+      - dim_customers
+      - dim_items
+      - fact_customer_orders
+
+  sm_purchase_orders:
+    depends_on:
+      - dim_vendors
+      - dim_items
+      - fact_purchase_orders
+
+  sm_work_orders:
+    depends_on:
+      - dim_items
+      - dim_sites
+      - fact_work_orders
+
+  sm_production_throughput:
+    depends_on:
+      - dim_sites
+      - dim_items
+      - fact_production_throughput
+
+  sm_machine_usage:
+    depends_on:
+      - dim_machines
+      - fact_machine_usage
+
+  sm_machine_downtime:
+    depends_on:
+      - dim_machines
+      - fact_machine_downtime
+
+  sm_financials:
+    depends_on:
+      - dim_accounts
+      - fact_financials
+
+  sm_ar:
+    depends_on:
+      - dim_customers
+      - fact_ar
+
+  sm_ap:
+    depends_on:
+      - dim_vendors
+      - fact_ap
+
+  sm_oee_kpi:
+    depends_on:
+      - sm_production_throughput
+      - sm_machine_usage
+      - sm_machine_downtime
+
+  sm_production_performance_kpi:
+    depends_on:
+      - sm_production_throughput
+
+  sm_machine_reliability_kpi:
+    depends_on:
+      - sm_machine_usage
+      - sm_machine_downtime
+
+  sm_predictive_maintenance_kpi:
+    depends_on:
+      - sm_machine_reliability_kpi
+      - sm_production_throughput
+
+  sm_weekly_production_throughput:
+    depends_on:
+      - sm_production_throughput
+
+  sm_monthly_production_throughput:
+    depends_on:
+      - sm_production_throughput
+
+  sm_financial_quarterly:
+    depends_on:
+      - sm_financials
+      - sm_ar
+      - sm_ap

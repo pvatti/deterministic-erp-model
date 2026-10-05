@@ -1,0 +1,70 @@
+rules:
+  - id: no_null_keys
+    description: "Primary business keys must never be NULL"
+    applies_to:
+      - sm_sales
+      - sm_inventory
+      - sm_customer_orders
+      - sm_purchase_orders
+      - sm_work_orders
+      - sm_production_throughput
+    sql: |
+      SELECT COUNT(*) AS failures
+      FROM {view}
+      WHERE site_id IS NULL
+         OR item_id IS NULL;
+
+  - id: no_negative_quantities
+    description: "Quantities must never be negative"
+    applies_to:
+      - sm_inventory
+      - sm_customer_orders
+      - sm_purchase_orders
+      - sm_work_orders
+      - sm_production_throughput
+    sql: |
+      SELECT COUNT(*) AS failures
+      FROM {view}
+      WHERE quantity < 0
+         OR units_produced < 0
+         OR scrap_units < 0;
+
+  - id: financial_amounts_nonzero
+    description: "Financial amounts must not be NULL and must be numeric"
+    applies_to:
+      - sm_financials
+      - sm_ar
+      - sm_ap
+    sql: |
+      SELECT COUNT(*) AS failures
+      FROM {view}
+      WHERE amount IS NULL
+         OR amount NOT BETWEEN -999999999 AND 999999999;
+
+  - id: kpi_no_divide_by_zero
+    description: "KPI views must not produce divide-by-zero conditions"
+    applies_to:
+      - sm_oee_kpi
+      - sm_production_performance_kpi
+      - sm_machine_reliability_kpi
+      - sm_predictive_maintenance_kpi
+    sql: |
+      SELECT COUNT(*) AS failures
+      FROM {view}
+      WHERE (runtime_minutes + downtime_minutes) = 0
+         OR total_units = 0;
+
+  - id: kpi_no_null_kpi_values
+    description: "KPI values must not be NULL unless explicitly allowed"
+    applies_to:
+      - sm_oee_kpi
+      - sm_production_performance_kpi
+      - sm_machine_reliability_kpi
+      - sm_predictive_maintenance_kpi
+    sql: |
+      SELECT COUNT(*) AS failures
+      FROM {view}
+      WHERE oee IS NULL
+         OR availability IS NULL
+         OR performance IS NULL
+         OR quality IS NULL;
