@@ -1,0 +1,148 @@
+{
+  "semantic_models": [
+    {
+      "name": "sm_production_throughput",
+      "description": "Semantic model representing hourly production throughput, including good units and scrap.",
+      "purpose": "Provides normalized throughput metrics for production analysis, OEE, and performance KPIs.",
+      "upstream_sources": [
+        "fact_production_throughput",
+        "dim_items",
+        "dim_sites"
+      ],
+      "dependencies": [],
+      "downstream_kpis": [
+        "Production Throughput",
+        "Performance",
+        "Quality Rate",
+        "OEE"
+      ],
+      "validations": [
+        "throughput >= 0",
+        "good_units >= 0",
+        "scrap_units >= 0"
+      ],
+      "tags": ["manufacturing", "production"]
+    },
+    {
+      "name": "sm_machine_usage",
+      "description": "Semantic model representing machine runtime, planned time, and utilization.",
+      "purpose": "Feeds availability calculations and machine-level operational KPIs.",
+      "upstream_sources": [
+        "fact_machine_usage",
+        "dim_machines",
+        "dim_sites"
+      ],
+      "dependencies": [],
+      "downstream_kpis": [
+        "Availability",
+        "OEE"
+      ],
+      "validations": [
+        "runtime >= 0",
+        "planned_time >= runtime"
+      ],
+      "tags": ["operations", "manufacturing"]
+    },
+    {
+      "name": "sm_machine_downtime",
+      "description": "Semantic model representing machine downtime events, including duration and cause codes.",
+      "purpose": "Feeds reliability, availability, and downtime analysis.",
+      "upstream_sources": [
+        "fact_machine_downtime",
+        "dim_machines",
+        "dim_sites"
+      ],
+      "dependencies": [],
+      "downstream_kpis": [
+        "Machine Reliability",
+        "Availability",
+        "OEE"
+      ],
+      "validations": [
+        "downtime_minutes >= 0"
+      ],
+      "tags": ["maintenance", "operations"]
+    },
+    {
+      "name": "sm_oee_kpi",
+      "description": "Composite semantic model calculating availability, performance, quality, and OEE.",
+      "purpose": "Provides unified OEE metrics for operations dashboards and AI reasoning.",
+      "upstream_sources": [],
+      "dependencies": [
+        "sm_machine_usage",
+        "sm_machine_downtime",
+        "sm_production_throughput"
+      ],
+      "downstream_kpis": [
+        "OEE"
+      ],
+      "validations": [
+        "availability between 0 and 1",
+        "performance between 0 and 1",
+        "quality between 0 and 1",
+        "oee between 0 and 1"
+      ],
+      "tags": ["operations", "efficiency", "manufacturing"]
+    },
+    {
+      "name": "sm_machine_reliability_kpi",
+      "description": "Semantic model calculating MTBF, MTTR, and reliability ratios.",
+      "purpose": "Provides reliability metrics for maintenance planning and predictive analysis.",
+      "upstream_sources": [],
+      "dependencies": [
+        "sm_machine_usage",
+        "sm_machine_downtime"
+      ],
+      "downstream_kpis": [
+        "Machine Reliability"
+      ],
+      "validations": [
+        "mtbf >= 0",
+        "mttr >= 0",
+        "reliability between 0 and 1"
+      ],
+      "tags": ["maintenance", "reliability"]
+    },
+    {
+      "name": "sm_inventory",
+      "description": "Semantic model representing inventory quantities, adjustments, and physical counts.",
+      "purpose": "Feeds inventory accuracy, availability, and supply chain KPIs.",
+      "upstream_sources": [
+        "fact_inventory",
+        "dim_items",
+        "dim_sites"
+      ],
+      "dependencies": [],
+      "downstream_kpis": [
+        "Inventory Accuracy"
+      ],
+      "validations": [
+        "system_qty >= 0",
+        "physical_qty >= 0"
+      ],
+      "tags": ["inventory", "supply_chain"]
+    },
+    {
+      "name": "sm_customer_orders",
+      "description": "Semantic model representing customer orders, fulfillment status, and lead times.",
+      "purpose": "Feeds fill rate, backorder analysis, and on-time delivery KPIs.",
+      "upstream_sources": [
+        "fact_customer_orders",
+        "fact_shipping",
+        "dim_customers",
+        "dim_items"
+      ],
+      "dependencies": [],
+      "downstream_kpis": [
+        "Lead Time",
+        "Fill Rate",
+        "On-Time Delivery"
+      ],
+      "validations": [
+        "order_qty >= 0",
+        "shipped_qty >= 0"
+      ],
+      "tags": ["customer", "supply_chain"]
+    }
+  ]
+}

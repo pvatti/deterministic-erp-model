@@ -1,0 +1,103 @@
+{
+  "glossary": [
+    {
+      "term": "Throughput",
+      "definition": "The rate at which finished goods are produced over a defined time window.",
+      "example": "A line producing 500 good units per hour has a throughput of 500 units/hour.",
+      "semantic_models": ["sm_production_throughput"],
+      "related_kpis": ["Production Throughput", "OEE"],
+      "lineage_sources": ["fact_production_throughput", "dim_items", "dim_sites"],
+      "tags": ["manufacturing", "production"]
+    },
+    {
+      "term": "Scrap",
+      "definition": "Units that fail quality checks and cannot be shipped or sold.",
+      "example": "If 20 units fail inspection out of 500 produced, scrap = 20 units.",
+      "semantic_models": ["sm_production_throughput"],
+      "related_kpis": ["Quality Rate", "OEE"],
+      "lineage_sources": ["fact_production_throughput"],
+      "tags": ["quality", "manufacturing"]
+    },
+    {
+      "term": "Downtime",
+      "definition": "Any period when a machine is not producing due to failure, maintenance, or setup.",
+      "example": "A machine offline for 45 minutes due to a jam has 45 minutes of downtime.",
+      "semantic_models": ["sm_machine_downtime"],
+      "related_kpis": ["Machine Reliability", "OEE"],
+      "lineage_sources": ["fact_machine_downtime", "dim_machines"],
+      "tags": ["maintenance", "manufacturing"]
+    },
+    {
+      "term": "Runtime",
+      "definition": "The amount of time a machine is actively producing.",
+      "example": "If a shift is 8 hours and the machine runs for 7 hours, runtime = 7 hours.",
+      "semantic_models": ["sm_machine_usage"],
+      "related_kpis": ["Availability", "OEE"],
+      "lineage_sources": ["fact_machine_usage"],
+      "tags": ["operations", "manufacturing"]
+    },
+    {
+      "term": "Availability",
+      "definition": "Percentage of planned production time during which a machine is running.",
+      "example": "If planned time is 480 minutes and runtime is 450 minutes, availability = 93.75%.",
+      "semantic_models": ["sm_oee_kpi"],
+      "related_kpis": ["OEE"],
+      "lineage_sources": ["sm_machine_usage", "sm_machine_downtime"],
+      "tags": ["operations", "efficiency"]
+    },
+    {
+      "term": "Performance",
+      "definition": "Measures how close actual output is to ideal output based on cycle time.",
+      "example": "If ideal output is 600 units/hour but actual is 540, performance = 90%.",
+      "semantic_models": ["sm_oee_kpi"],
+      "related_kpis": ["OEE"],
+      "lineage_sources": ["sm_production_throughput"],
+      "tags": ["operations", "efficiency"]
+    },
+    {
+      "term": "Quality Rate",
+      "definition": "Percentage of produced units that meet quality standards.",
+      "example": "480 good units out of 500 total units → quality rate = 96%.",
+      "semantic_models": ["sm_oee_kpi"],
+      "related_kpis": ["OEE"],
+      "lineage_sources": ["sm_production_throughput"],
+      "tags": ["quality", "manufacturing"]
+    },
+    {
+      "term": "OEE",
+      "definition": "Overall Equipment Effectiveness — a composite metric of availability, performance, and quality.",
+      "example": "Availability 93%, Performance 90%, Quality 96% → OEE ≈ 80%.",
+      "semantic_models": ["sm_oee_kpi"],
+      "related_kpis": ["OEE"],
+      "lineage_sources": ["sm_machine_usage", "sm_machine_downtime", "sm_production_throughput"],
+      "tags": ["operations", "efficiency", "manufacturing"]
+    },
+    {
+      "term": "Inventory Accuracy",
+      "definition": "How closely system inventory matches physical counts.",
+      "example": "System says 100 units, physical count is 98 → accuracy = 98%.",
+      "semantic_models": ["sm_inventory"],
+      "related_kpis": ["Inventory Accuracy"],
+      "lineage_sources": ["fact_inventory", "dim_items"],
+      "tags": ["inventory", "supply_chain"]
+    },
+    {
+      "term": "Lead Time",
+      "definition": "Time between order creation and order fulfillment.",
+      "example": "Customer order placed Monday, shipped Wednesday → lead time = 2 days.",
+      "semantic_models": ["sm_customer_orders"],
+      "related_kpis": ["On-Time Delivery"],
+      "lineage_sources": ["fact_customer_orders", "fact_shipping"],
+      "tags": ["supply_chain", "customer"]
+    },
+    {
+      "term": "Backorder",
+      "definition": "Units ordered by customers but not yet shipped due to insufficient inventory.",
+      "example": "Customer orders 50 units, only 30 available → backorder = 20 units.",
+      "semantic_models": ["sm_customer_orders"],
+      "related_kpis": ["Fill Rate"],
+      "lineage_sources": ["fact_customer_orders", "fact_inventory"],
+      "tags": ["inventory", "customer"]
+    }
+  ]
+}

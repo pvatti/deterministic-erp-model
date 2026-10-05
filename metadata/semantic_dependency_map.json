@@ -1,0 +1,74 @@
+{
+  "dependency_map": {
+    "semantic_models": {
+      "sm_production_throughput": {
+        "upstream_facts": ["fact_production_throughput"],
+        "upstream_dimensions": ["dim_items", "dim_sites"],
+        "depends_on_semantic": [],
+        "downstream_semantic": ["sm_oee_kpi"],
+        "downstream_kpis": ["Production Throughput", "Performance", "Quality Rate", "OEE"]
+      },
+      "sm_machine_usage": {
+        "upstream_facts": ["fact_machine_usage"],
+        "upstream_dimensions": ["dim_machines", "dim_sites"],
+        "depends_on_semantic": [],
+        "downstream_semantic": ["sm_oee_kpi", "sm_machine_reliability_kpi"],
+        "downstream_kpis": ["Availability", "OEE"]
+      },
+      "sm_machine_downtime": {
+        "upstream_facts": ["fact_machine_downtime"],
+        "upstream_dimensions": ["dim_machines", "dim_sites"],
+        "depends_on_semantic": [],
+        "downstream_semantic": ["sm_oee_kpi", "sm_machine_reliability_kpi"],
+        "downstream_kpis": ["Machine Reliability", "Availability", "OEE"]
+      },
+      "sm_oee_kpi": {
+        "upstream_facts": [],
+        "upstream_dimensions": [],
+        "depends_on_semantic": [
+          "sm_machine_usage",
+          "sm_machine_downtime",
+          "sm_production_throughput"
+        ],
+        "downstream_semantic": [],
+        "downstream_kpis": ["OEE"]
+      },
+      "sm_machine_reliability_kpi": {
+        "upstream_facts": [],
+        "upstream_dimensions": [],
+        "depends_on_semantic": [
+          "sm_machine_usage",
+          "sm_machine_downtime"
+        ],
+        "downstream_semantic": [],
+        "downstream_kpis": ["Machine Reliability"]
+      },
+      "sm_inventory": {
+        "upstream_facts": ["fact_inventory"],
+        "upstream_dimensions": ["dim_items", "dim_sites"],
+        "depends_on_semantic": [],
+        "downstream_semantic": [],
+        "downstream_kpis": ["Inventory Accuracy"]
+      },
+      "sm_customer_orders": {
+        "upstream_facts": ["fact_customer_orders", "fact_shipping"],
+        "upstream_dimensions": ["dim_customers", "dim_items"],
+        "depends_on_semantic": [],
+        "downstream_semantic": [],
+        "downstream_kpis": ["Lead Time", "Fill Rate", "On-Time Delivery"]
+      }
+    },
+    "kpi_dependencies": {
+      "OEE": ["sm_oee_kpi"],
+      "Production Throughput": ["sm_production_throughput"],
+      "Performance": ["sm_production_throughput"],
+      "Quality Rate": ["sm_production_throughput"],
+      "Availability": ["sm_machine_usage", "sm_machine_downtime"],
+      "Machine Reliability": ["sm_machine_reliability_kpi"],
+      "Inventory Accuracy": ["sm_inventory"],
+      "Lead Time": ["sm_customer_orders"],
+      "Fill Rate": ["sm_customer_orders"],
+      "On-Time Delivery": ["sm_customer_orders"]
+    }
+  }
+}

@@ -31,6 +31,13 @@
     "sm_financial_quarterly.sql",
 
     "sm_inventory_kpi_daily.sql",
-    "sm_sales_kpi_monthly.sql"
+    "sm_sales_kpi_monthly.sql",
+
+    "agg_oee_daily.sql",
+    "agg_production_throughput_daily.sql",
+    "agg_machine_reliability_daily.sql",
+    "agg_inventory_accuracy_daily.sql",
+    "agg_lead_time_daily.sql",
+    "agg_fill_rate_daily.sql"
   ]
 }

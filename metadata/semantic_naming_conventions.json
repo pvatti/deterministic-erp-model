@@ -1,0 +1,112 @@
+{
+  "naming_conventions": {
+    "semantic_models": {
+      "prefix": "sm_",
+      "pattern": "sm_<domain>_<metric_or_entity>",
+      "examples": [
+        "sm_production_throughput",
+        "sm_machine_usage",
+        "sm_oee_kpi",
+        "sm_inventory"
+      ],
+      "rules": [
+        "Use lowercase snake_case.",
+        "Prefix all semantic models with 'sm_'.",
+        "Name should reflect business domain and metric.",
+        "Avoid abbreviations unless industry-standard (e.g., OEE)."
+      ]
+    },
+    "kpi_models": {
+      "prefix": "kpi_",
+      "pattern": "kpi_<metric>",
+      "examples": [
+        "kpi_oee",
+        "kpi_inventory_accuracy",
+        "kpi_machine_reliability"
+      ],
+      "rules": [
+        "KPIs must be prefixed with 'kpi_'.",
+        "KPIs must map directly to a semantic model.",
+        "KPI names must match dictionary entries exactly."
+      ]
+    },
+    "fact_tables": {
+      "prefix": "fact_",
+      "pattern": "fact_<business_event>",
+      "examples": [
+        "fact_production_throughput",
+        "fact_machine_usage",
+        "fact_inventory",
+        "fact_customer_orders"
+      ],
+      "rules": [
+        "Facts represent business events or transactions.",
+        "Use 'fact_' prefix for all fact tables.",
+        "Name should reflect the event being recorded."
+      ]
+    },
+    "dimension_tables": {
+      "prefix": "dim_",
+      "pattern": "dim_<entity>",
+      "examples": [
+        "dim_items",
+        "dim_sites",
+        "dim_machines",
+        "dim_customers"
+      ],
+      "rules": [
+        "Dimensions represent entities or attributes.",
+        "Use 'dim_' prefix for all dimension tables.",
+        "Pluralize dimension names (e.g., dim_items)."
+      ]
+    },
+    "aggregate_models": {
+      "prefix": "agg_",
+      "pattern": "agg_<domain>_<metric>_<grain>",
+      "examples": [
+        "agg_production_throughput_daily",
+        "agg_oee_weekly",
+        "agg_inventory_accuracy_monthly"
+      ],
+      "rules": [
+        "Aggregates must be prefixed with 'agg_'.",
+        "Grain must be included (daily, weekly, monthly).",
+        "Aggregates must reference semantic models, not facts."
+      ]
+    },
+    "validation_rules": {
+      "prefix": "val_",
+      "pattern": "val_<domain>_<check>",
+      "examples": [
+        "val_oee_bounds",
+        "val_inventory_non_negative",
+        "val_throughput_non_negative"
+      ],
+      "rules": [
+        "Validation rules must be prefixed with 'val_'.",
+        "Validation names must describe the check being performed."
+      ]
+    },
+    "logging_tables": {
+      "prefix": "log_",
+      "pattern": "log_<domain>_<event>",
+      "examples": [
+        "log_semantic",
+        "log_pipeline_runs"
+      ],
+      "rules": [
+        "Logging tables must be prefixed with 'log_'.",
+        "Logging names must reflect the event type."
+      ]
+    },
+    "general_rules": [
+      "Use lowercase snake_case for all names.",
+      "Avoid spaces, hyphens, or camelCase.",
+      "Names must be deterministic and stable over time.",
+      "Names must reflect business meaning, not technical implementation.",
+      "Prefixes must never be omitted.",
+      "Every semantic model must map to at least one KPI or downstream consumer.",
+      "Every KPI must map to exactly one semantic model."
+    ]
+  }
+}

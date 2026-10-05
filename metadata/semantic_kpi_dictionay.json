@@ -1,0 +1,100 @@
+{
+  "kpis": [
+    {
+      "name": "OEE",
+      "semantic_model": "sm_oee_kpi",
+      "description": "Overall Equipment Effectiveness — measures manufacturing productivity across availability, performance, and quality.",
+      "formula": {
+        "availability": "runtime / planned_production_time",
+        "performance": "actual_output / ideal_output",
+        "quality": "good_units / total_units",
+        "oee": "availability * performance * quality"
+      },
+      "business_rules": [
+        "Exclude planned downtime from runtime.",
+        "Use ideal cycle time for performance calculation.",
+        "Scrap units must be included in total_units."
+      ],
+      "dependencies": [
+        "sm_machine_usage",
+        "sm_machine_downtime",
+        "sm_production_throughput"
+      ],
+      "validations": [
+        "availability between 0 and 1",
+        "performance between 0 and 1",
+        "quality between 0 and 1"
+      ],
+      "owner": "Operations",
+      "update_frequency": "hourly",
+      "tags": ["manufacturing", "efficiency", "operations"]
+    },
+    {
+      "name": "Production Throughput",
+      "semantic_model": "sm_production_throughput",
+      "description": "Units produced per time period, excluding scrap.",
+      "formula": {
+        "throughput": "good_units / time_window"
+      },
+      "business_rules": [
+        "Scrap units are excluded.",
+        "Time window defaults to 1 hour."
+      ],
+      "dependencies": [
+        "fact_production_throughput",
+        "dim_items",
+        "dim_sites"
+      ],
+      "validations": [
+        "throughput >= 0"
+      ],
+      "owner": "Operations",
+      "update_frequency": "hourly",
+      "tags": ["manufacturing", "production"]
+    },
+    {
+      "name": "Machine Reliability",
+      "semantic_model": "sm_machine_reliability_kpi",
+      "description": "Measures how consistently a machine performs without failure.",
+      "formula": {
+        "reliability": "mean_time_between_failures / (mean_time_between_failures + mean_time_to_repair)"
+      },
+      "business_rules": [
+        "Failures include unplanned downtime only.",
+        "MTTR includes technician response time."
+      ],
+      "dependencies": [
+        "sm_machine_usage",
+        "sm_machine_downtime"
+      ],
+      "validations": [
+        "reliability between 0 and 1"
+      ],
+      "owner": "Maintenance",
+      "update_frequency": "daily",
+      "tags": ["maintenance", "reliability"]
+    },
+    {
+      "name": "Inventory Accuracy",
+      "semantic_model": "sm_inventory",
+      "description": "Measures how accurately inventory records match physical counts.",
+      "formula": {
+        "accuracy": "1 - (abs(system_qty - physical_qty) / physical_qty)"
+      },
+      "business_rules": [
+        "Cycle counts must be completed weekly.",
+        "Negative accuracy values are capped at 0."
+      ],
+      "dependencies": [
+        "fact_inventory",
+        "dim_items"
+      ],
+      "validations": [
+        "accuracy between 0 and 1"
+      ],
+      "owner": "Supply Chain",
+      "update_frequency": "daily",
+      "tags": ["inventory", "supply_chain"]
+    }
+  ]
+}
